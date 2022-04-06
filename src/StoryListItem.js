@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Animated,
   Image,
@@ -11,33 +11,31 @@ import {
   View,
   Platform,
   SafeAreaView,
-} from 'react-native';
-import {usePrevious} from './helpers/StateHelpers';
-import {isNullOrWhitespace} from './helpers/ValidationHelpers';
-import GestureRecognizer from 'react-native-swipe-gestures';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import StoryCircleListView from './StoryCircleListView';
-import IconButton from './components/IconButton';
+} from "react-native";
 
-const {width, height} = Dimensions.get('window');
+import { usePrevious } from "./helpers/StateHelpers";
+import { isNullOrWhitespace } from "./helpers/ValidationHelpers";
+import GestureRecognizer from "react-native-swipe-gestures";
+import IconButton from "./components/IconButton";
 
-export const StoryListItem = props => {
+const { width, height } = Dimensions.get("window");
+
+export const StoryListItem = (props) => {
   const stories = props.stories;
 
   const [load, setLoad] = useState(true);
   const [pressed, setPressed] = useState(false);
   const [content, setContent] = useState(
-    stories.map(x => {
+    stories.map((x) => {
       return {
-        onSharePress: x.onSharePress,
-        onCartPress: x.onCartPress,
-        onLikePress: x.onLikePress,
+        id: x.id,
+        productId: x.productId,
         image: x.story_image,
         onBottomPress: x.onBottomPress,
         swipeText: x.swipeText,
         finish: 0,
       };
-    }),
+    })
   );
 
   const [current, setCurrent] = useState(0);
@@ -45,6 +43,8 @@ export const StoryListItem = props => {
   const progress = useRef(new Animated.Value(0)).current;
 
   const prevCurrentPage = usePrevious(props.currentPage);
+
+  const isLiked = props.likedList.includes(content[current].id);
 
   useEffect(() => {
     let isPrevious = prevCurrentPage > props.currentPage;
@@ -98,7 +98,7 @@ export const StoryListItem = props => {
       toValue: 1,
       duration: props.duration,
       useNativeDriver: false,
-    }).start(({finished}) => {
+    }).start(({ finished }) => {
       if (finished) {
         next();
       }
@@ -134,7 +134,7 @@ export const StoryListItem = props => {
       progress.setValue(0);
     } else {
       // the next content is empty
-      close('next');
+      close("next");
     }
   }
 
@@ -149,13 +149,13 @@ export const StoryListItem = props => {
       progress.setValue(0);
     } else {
       // the previous content is empty
-      close('previous');
+      close("previous");
     }
   }
 
   function close(state) {
     let data = [...content];
-    data.map(x => (x.finish = 0));
+    data.map((x) => (x.finish = 0));
     setContent(data);
     progress.setValue(0);
     if (props.currentPage == props.index) {
@@ -166,30 +166,30 @@ export const StoryListItem = props => {
   }
 
   const swipeText =
-    content?.[current]?.swipeText || props.swipeText || 'Swipe Up';
+    content?.[current]?.swipeText || props.swipeText || "Swipe Up";
 
   return (
     <GestureRecognizer
-      onSwipeUp={state => onSwipeUp(state)}
-      onSwipeDown={state => onSwipeDown(state)}
+      onSwipeUp={(state) => onSwipeUp(state)}
+      onSwipeDown={(state) => onSwipeDown(state)}
       config={config}
       style={{
         flex: 1,
-        backgroundColor: 'black',
+        backgroundColor: "black",
       }}>
       <SafeAreaView>
-        <View style={{position: 'absolute', right: 30, top: 250, zIndex: 40}}>
+        <View style={{ position: "absolute", right: 30, top: 250, zIndex: 40 }}>
           <IconButton
             containerStyle={styles.sideButton}
-            onPress={content[current].onLikePress}
-            iconName="cards-heart-outline"
+            onPress={() => props.onLikePress(content[current].id)}
+            iconName={isLiked ? "heart-multiple" : "heart-multiple-outline"}
             iconStyle={styles.textShadow}
             iconSize={props.iconSize}
-            color="#fff"
+            color={isLiked ? "#DA5874" : "#fff"}
           />
           <IconButton
             containerStyle={styles.sideButton}
-            onPress={content[current].onCartPress}
+            onPress={() => props.onCartPress(content[current].id)}
             iconName="cart-plus"
             iconStyle={styles.textShadow}
             iconSize={props.iconSize}
@@ -197,7 +197,12 @@ export const StoryListItem = props => {
           />
           <IconButton
             containerStyle={styles.sideButton}
-            onPress={content[current].onSharePress}
+            onPress={() =>
+              props.onSharePress(
+                content[current].id,
+                content[current].productId
+              )
+            }
             iconName="share-variant"
             iconStyle={styles.textShadow}
             iconSize={props.iconSize}
@@ -207,18 +212,18 @@ export const StoryListItem = props => {
         <View style={styles.backgroundContainer}>
           <Image
             onLoadEnd={() => start()}
-            source={{uri: content[current].image}}
+            source={{ uri: content[current].image }}
             style={styles.image}
           />
           {load && (
             <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" color={'white'} />
+              <ActivityIndicator size="large" color={"white"} />
             </View>
           )}
         </View>
       </SafeAreaView>
       {/* Progress bar */}
-      <View style={{flexDirection: 'column', flex: 1}}>
+      <View style={{ flexDirection: "column", flex: 1 }}>
         <View style={styles.animationBarContainer}>
           {content.map((index, key) => {
             return (
@@ -227,7 +232,7 @@ export const StoryListItem = props => {
                   style={{
                     flex: current == key ? progress : content[key].finish,
                     height: 2,
-                    backgroundColor: 'white',
+                    backgroundColor: "white",
                   }}
                 />
               </View>
@@ -235,10 +240,10 @@ export const StoryListItem = props => {
           })}
         </View>
         <View style={styles.userContainer}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image
               style={styles.avatarImage}
-              source={{uri: props.profileImage}}
+              source={{ uri: props.profileImage }}
             />
             <Text style={styles.avatarText}>{props.profileName}</Text>
           </View>
@@ -252,7 +257,7 @@ export const StoryListItem = props => {
               {props.customCloseComponent ? (
                 props.customCloseComponent
               ) : (
-                <Text style={{color: 'white', fontSize: 20}}>X</Text>
+                <Text style={{ color: "white", fontSize: 20 }}>X</Text>
               )}
             </View>
           </TouchableOpacity>
@@ -270,7 +275,7 @@ export const StoryListItem = props => {
                 previous();
               }
             }}>
-            <View style={{flex: 1}} />
+            <View style={{ flex: 1 }} />
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback
             onPressIn={() => progress.stopAnimation()}
@@ -284,7 +289,7 @@ export const StoryListItem = props => {
                 next();
               }
             }}>
-            <View style={{flex: 1}} />
+            <View style={{ flex: 1 }} />
           </TouchableWithoutFeedback>
         </View>
       </View>
@@ -301,7 +306,7 @@ export const StoryListItem = props => {
               color="#fff"
               iconStyle={styles.textShadow}
               textStyle={[
-                {color: 'white', fontSize: 20, marginTop: 5},
+                { color: "white", fontSize: 20, marginTop: 5 },
                 styles.textShadow,
               ]}
               title={swipeText}
@@ -323,22 +328,23 @@ const styles = StyleSheet.create({
   textShadow: {
     shadowOpacity: 2,
     textShadowRadius: 20,
-    textShadowOffset: {width: 0, height: 0},
+    textShadowOffset: { width: 0, height: 0 },
   },
   sideButton: {
     marginVertical: 10,
+    borderRadius: 50,
   },
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   image: {
     width: width,
     height: height,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   backgroundContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
@@ -346,31 +352,31 @@ const styles = StyleSheet.create({
   },
   spinnerContainer: {
     zIndex: -100,
-    position: 'absolute',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    alignSelf: 'center',
+    position: "absolute",
+    justifyContent: "center",
+    backgroundColor: "black",
+    alignSelf: "center",
     width: width,
     height: height,
   },
   animationBarContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.07)',
-    flexDirection: 'row',
+    backgroundColor: "rgba(0, 0, 0, 0.07)",
+    flexDirection: "row",
     paddingTop: 10,
     paddingHorizontal: 10,
   },
   animationBackground: {
     height: 2,
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'rgba(117, 117, 117, 0.5)',
+    flexDirection: "row",
+    backgroundColor: "rgba(117, 117, 117, 0.5)",
     marginHorizontal: 2,
   },
   userContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.07)',
+    backgroundColor: "rgba(0, 0, 0, 0.07)",
     height: 60,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 15,
   },
   avatarImage: {
@@ -379,28 +385,28 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   avatarText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
-    color: 'white',
+    color: "white",
     paddingLeft: 10,
   },
   closeIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     height: 50,
     paddingHorizontal: 15,
   },
   pressContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   swipeUpBtn: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     right: 0,
     left: 0,
-    alignItems: 'center',
-    bottom: Platform.OS == 'ios' ? 20 : 50,
+    alignItems: "center",
+    bottom: Platform.OS == "ios" ? 20 : 50,
   },
 });

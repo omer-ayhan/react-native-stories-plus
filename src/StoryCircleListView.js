@@ -1,8 +1,8 @@
-import React from 'react';
-import {View, FlatList} from 'react-native';
-import StoryCircleListItem from './StoryCircleListItem';
+import React from "react";
+import { View, FlatList } from "react-native";
+import StoryCircleListItem from "./StoryCircleListItem";
 
-const StoryCircleListView = props => {
+const StoryCircleListView = (props) => {
   const {
     data,
     handleStoryItemPress,
@@ -21,11 +21,11 @@ const StoryCircleListView = props => {
         }
         data={data}
         horizontal
-        style={{paddingLeft: 12}}
+        style={{ paddingLeft: 12 }}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
-        ListFooterComponent={<View style={{flex: 1, width: 8}} />}
-        renderItem={({item, index}) => (
+        ListFooterComponent={<View style={{ flex: 1, width: 8 }} />}
+        renderItem={({ item, index }) => (
           <StoryCircleListItem
             avatarSize={avatarSize}
             handleStoryItemPress={() =>
