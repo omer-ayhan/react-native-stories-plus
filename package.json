@@ -1,6 +1,6 @@
 {
   "name": "react-native-stories-plus",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Stories for React Native inspired by react-native-stories-media",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,6 @@
     "react-native": "*"
   },
   "dependencies": {
-    "react": "17.0.2",
-    "react-native": "0.68.0",
     "react-native-modalbox": "^2.0.2",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-vector-icons": "^9.1.0"
