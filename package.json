@@ -1,6 +1,6 @@
 {
   "name": "react-native-stories-plus",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "Stories for React Native inspired by react-native-stories-media",
   "main": "index.js",
   "scripts": {

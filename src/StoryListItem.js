@@ -178,37 +178,42 @@ export const StoryListItem = (props) => {
         backgroundColor: "black",
       }}>
       <SafeAreaView>
-        <View style={{ position: "absolute", right: 30, top: 250, zIndex: 40 }}>
-          <IconButton
-            containerStyle={styles.sideButton}
-            onPress={() => props.onLikePress(content[current].id)}
-            iconName={isLiked ? "heart-multiple" : "heart-multiple-outline"}
-            iconStyle={styles.textShadow}
-            iconSize={props.iconSize}
-            color={isLiked ? "#DA5874" : "#fff"}
-          />
-          <IconButton
-            containerStyle={styles.sideButton}
-            onPress={() => props.onCartPress(content[current].id)}
-            iconName="cart-plus"
-            iconStyle={styles.textShadow}
-            iconSize={props.iconSize}
-            color="#fff"
-          />
-          <IconButton
-            containerStyle={styles.sideButton}
-            onPress={() =>
-              props.onSharePress(
-                content[current].id,
-                content[current].productId
-              )
-            }
-            iconName="share-variant"
-            iconStyle={styles.textShadow}
-            iconSize={props.iconSize}
-            color="#fff"
-          />
-        </View>
+        {Platform.OS === "android" ? (
+          <View
+            style={{ position: "absolute", right: 30, top: 250, zIndex: 40 }}>
+            <IconButton
+              containerStyle={styles.sideButton}
+              onPress={() => props.onLikePress(content[current].id)}
+              iconName={isLiked ? "heart-multiple" : "heart-multiple-outline"}
+              iconStyle={styles.textShadow}
+              iconSize={props.iconSize}
+              color={isLiked ? "#DA5874" : "#fff"}
+            />
+            <IconButton
+              containerStyle={styles.sideButton}
+              onPress={() => props.onCartPress(content[current].id)}
+              iconName="cart-plus"
+              iconStyle={styles.textShadow}
+              iconSize={props.iconSize}
+              color="#fff"
+            />
+            <IconButton
+              containerStyle={styles.sideButton}
+              onPress={() =>
+                props.onSharePress(
+                  content[current].id,
+                  content[current].productId
+                )
+              }
+              iconName="share-variant"
+              iconStyle={styles.textShadow}
+              iconSize={props.iconSize}
+              color="#fff"
+            />
+          </View>
+        ) : (
+          <></>
+        )}
         <View style={styles.backgroundContainer}>
           <Image
             onLoadEnd={() => start()}
@@ -291,6 +296,41 @@ export const StoryListItem = (props) => {
             }}>
             <View style={{ flex: 1 }} />
           </TouchableWithoutFeedback>
+          {Platform.OS === "ios" ? (
+            <View style={{ marginRight: 20, marginTop: 120 }}>
+              <IconButton
+                containerStyle={styles.sideButton}
+                onPress={() => props.onLikePress(content[current].id)}
+                iconName={isLiked ? "heart-multiple" : "heart-multiple-outline"}
+                iconStyle={styles.textShadow}
+                iconSize={props.iconSize}
+                color={isLiked ? "#DA5874" : "#fff"}
+              />
+              <IconButton
+                containerStyle={styles.sideButton}
+                onPress={() => props.onCartPress(content[current].id)}
+                iconName="cart-plus"
+                iconStyle={styles.textShadow}
+                iconSize={props.iconSize}
+                color="#fff"
+              />
+              <IconButton
+                containerStyle={styles.sideButton}
+                onPress={() =>
+                  props.onSharePress(
+                    content[current].id,
+                    content[current].productId
+                  )
+                }
+                iconName="share-variant"
+                iconStyle={styles.textShadow}
+                iconSize={props.iconSize}
+                color="#fff"
+              />
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </View>
       {content[current].onBottomPress && (
@@ -326,7 +366,7 @@ StoryListItem.defaultProps = {
 
 const styles = StyleSheet.create({
   textShadow: {
-    shadowOpacity: 2,
+    shadowOpacity: Platform.OS === "ios" ? 0.5 : 2,
     textShadowRadius: 20,
     textShadowOffset: { width: 0, height: 0 },
   },
