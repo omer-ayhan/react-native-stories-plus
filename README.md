@@ -118,4 +118,4 @@ const data = [
 />;
 ```
 
-### this project inspired by [react-native-insta-story](https://github.com/caglardurmus/react-native-insta-story) repository
+### this project inspired by [React Native Stories Media](https://github.com/iguilhermeluis/react-native-stories-media) repository
